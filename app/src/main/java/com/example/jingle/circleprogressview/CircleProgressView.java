@@ -27,12 +27,11 @@ public class CircleProgressView extends View {
         super(context, attrs);
         circlePaint = new Paint();
         circlePaint.setAntiAlias(true);
-        circlePaint.setColor(Color.RED);
+        circlePaint.setColor(Color.GRAY);
         circlePaint.setStyle(Paint.Style.STROKE);
         circlePaint.setStrokeWidth(20);
 
         prePaint = new Paint();
-        prePaint.setColor(Color.GREEN);
         prePaint.setStrokeWidth(20);
         prePaint.setAntiAlias(true);
         prePaint.setStyle(Paint.Style.STROKE);
@@ -53,20 +52,31 @@ public class CircleProgressView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawArc(oval, -90, 360, false, circlePaint);
-        canvas.drawArc(oval,-90,trueAngle,false,prePaint);
+        drawPreView(canvas);
     }
-    public void changeAngle(){
-        final Timer timer  = new Timer();
+
+    private void drawPreView(Canvas canvas) {
+        float percent = trueAngle * 1f / endAngle;
+        int red = 255 - (int) (percent * 255);
+        int green = (int) (percent * 255);
+        prePaint.setARGB(255, red, green, 0);
+        canvas.drawArc(oval, -90, trueAngle, false, prePaint);
+    }
+
+    public void changeAngle() {
+        trueAngle = 0;
+        final Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 trueAngle += 5;
-                if (trueAngle >= endAngle){
+                if (trueAngle >= endAngle) {
+                    trueAngle = endAngle;
                     timer.cancel();
                 }
                 postInvalidate();
             }
-        },500,30);
+        }, 500, 30);
     }
 
 }
