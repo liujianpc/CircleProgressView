@@ -18,7 +18,6 @@ import java.util.TimerTask;
 public class CircleProgressView extends View {
     private Paint circlePaint, prePaint;
     private RectF oval;
-    private int startAngle = 0;
     private int endAngle = 360;
     private int trueAngle = 0;
 
@@ -56,11 +55,19 @@ public class CircleProgressView extends View {
     }
 
     private void drawPreView(Canvas canvas) {
-        float percent = trueAngle * 1f / endAngle;
-        int red = 255 - (int) (percent * 255);
-        int green = (int) (percent * 255);
-        prePaint.setARGB(255, red, green, 0);
-        canvas.drawArc(oval, -90, trueAngle, false, prePaint);
+        int drawTimes = endAngle / 5;
+        int startAngle = -90;
+        for (int i = 0; i < drawTimes; i++) {
+            if (startAngle <= trueAngle && trueAngle != 0) {
+                float percent = (startAngle + 90) * 1f / endAngle;
+                int red = 255 - (int) (percent * 255);
+                int green = (int) (percent * 255);
+                prePaint.setARGB(255, red, green, 0);
+                canvas.drawArc(oval, startAngle, 5, false, prePaint);
+                startAngle += 5;
+            }
+
+        }
     }
 
     public void changeAngle() {
